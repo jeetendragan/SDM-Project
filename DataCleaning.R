@@ -1,5 +1,3 @@
-require(nnet)
-
 rm(list = ls())
 train = read.csv('train.csv')
 head(train)

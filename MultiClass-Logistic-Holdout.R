@@ -1,4 +1,6 @@
 library(caret)
+require(nnet)
+
 train = read.csv('Final-Train.csv')
 set.seed(1)
 totalRows = dim(train)[1]
