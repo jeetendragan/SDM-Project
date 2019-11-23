@@ -1,0 +1,58 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+The following is the head of the data.
+```{r}
+library(corrplot)
+train = read.csv('train.csv')
+head(train)
+```
+
+In this report we focus on data cleaning and EDA. We have removed 12 features that had more than 6000 NA values. After the features were dropped, we also dropped rows that had NA values.
+
+Removing the columns with NAs greater than 6000(more than 10% of data)
+
+```{r}
+#sapply(train, function(x) sum(is.na(x)))
+#rm(train_imp)
+#removing the columns with NAs greater than 6000(more than 10% of data)
+train_imp=train
+x = list()
+count =1
+for (i in 1:128){
+  if (sum(is.na(train[,i]))>6000){
+    x[count] = i
+    count = count+1
+  } 
+}
+x = unlist(x)
+train_imp = train[,-x]
+train_imp = na.omit(train_imp)
+train_imp$Product_Info_2 = as.numeric(train_imp$Product_Info_2)
+
+write.csv(train_imp, "Final-Train.csv")
+```
+
+Dim after cleaning
+
+```{r}
+dim(train_imp)
+```
+
+Let us now find out the distribution of classes in the data.
+```{r}
+hist(train_imp$Response, xlab="Classes", xlim=c(1,8), col="darkmagenta", freq=FALSE)
+classCount = rep(0, 8)
+for(i in 1:8){
+  classCount[i] = length(train_imp$Response[train_imp$Response == i])
+}
+classes = seq(1,8)
+classCount
+data.frame(classes, classCount)
+```
+
+It can be seen that there aren't many samples.
