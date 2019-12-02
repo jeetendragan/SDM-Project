@@ -1,0 +1,45 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+drawStackedConfusionMat <- function(confusionMat){
+  n = dim(confusionMat$table)[1]
+  classificationMat = matrix(0, nrow = 2, ncol = n)
+  classNames = c()
+  for(i in 1:n){
+    classNames = cbind(classNames, sprintf("C%i", i))
+    classificationMat[1, i] = confusionMat$table[i, i]
+    classificationMat[2, i] = sum(confusionMat$table[, i]) - confusionMat$table[i, i]
+  }
+  #classNames
+  colnames(classificationMat) = classNames
+  rownames(classificationMat) = c("Correct classifications", "Incorrect Classifications")
+  #classificationMat
+  barplot(data, 
+        col = c("green","red"), 
+        border="white",
+        space=0.04, 
+        font.axis=2, 
+        xlab="Class", ylab = "Classification count")
+}
+```
+
+```{r}
+require(MASS)
+#train = read.csv('Final-Train.csv')
+train = read.csv('Data_NA-Cleaned_Subset-Selected.csv', header = TRUE)
+train = train[, -1]
+set.seed(7)
+totalRows = dim(train)[1]
+trainIndices = sample( c(1:totalRows), totalRows*0.80)
+finalTrain = train[trainIndices, ]
+finalTest = train[-trainIndices, ]
+finalTrain$Response = factor(finalTrain$Response)
+model_fit <- polr(Response ~ ., data = finalTrain, Hess = TRUE)
+model_fit
+prediction = predict(model_fit, finalTest)
+cm = confusionMatrix(data = as.factor(prediction),as.factor(finalTest$Response))
+drawStackedConfusionMat(cm)
+```

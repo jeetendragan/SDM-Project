@@ -10,7 +10,7 @@ rm(train_imp)
 #removing the columns with NAs greater than 6000(more than 10% of data)
 train_imp=train
 x = list()
-count =1
+count = 1
 for (i in 1:128){
   if (sum(is.na(train[,i]))>6000){
     x[count] = i

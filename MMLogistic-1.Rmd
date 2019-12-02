@@ -1,0 +1,15 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(mlogit)
+train = read.csv('Final-Train.csv')
+set.seed(1)
+totalRows = dim(train)[1]
+trainIndices = sample( c(1:totalRows), totalRows*0.80)
+finalTrain = train_imp[trainIndices, ]
+finalTest = train_imp[-trainIndices, ]
+mlogitModel = mlogit(Response ~ ., data = finalTrain)
+```
