@@ -17,7 +17,7 @@ drawStackedConfusionMat <- function(confusionMat){
   colnames(classificationMat) = classNames
   rownames(classificationMat) = c("Correct classifications", "Incorrect Classifications")
   #classificationMat
-  barplot(data, 
+  barplot(classificationMat, 
         col = c("green","red"), 
         border="white",
         space=0.04, 
@@ -31,15 +31,19 @@ require(MASS)
 #train = read.csv('Final-Train.csv')
 train = read.csv('Data_NA-Cleaned_Subset-Selected.csv', header = TRUE)
 train = train[, -1]
+train$Response = ifelse(train$Response <= 4, 1, 0)
+train$Response = as.factor(train$Response)
 set.seed(7)
 totalRows = dim(train)[1]
 trainIndices = sample( c(1:totalRows), totalRows*0.80)
 finalTrain = train[trainIndices, ]
 finalTest = train[-trainIndices, ]
 finalTrain$Response = factor(finalTrain$Response)
-model_fit <- polr(Response ~ ., data = finalTrain, Hess = TRUE)
+#model_fit <- polr(Response ~ ., data = finalTrain, Hess = TRUE)
+model_fit <- glm(Response ~ ., data = finalTrain, family = binomial)
 model_fit
 prediction = predict(model_fit, finalTest)
+prediction = ifelse(prediction < 0.5, 1, 0)
 cm = confusionMatrix(data = as.factor(prediction),as.factor(finalTest$Response))
 drawStackedConfusionMat(cm)
 ```
